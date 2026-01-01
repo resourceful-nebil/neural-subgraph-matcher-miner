@@ -12,3 +12,7 @@ results/
 orca/
 core
 deepsnap-experimental/
+
+# Large dataset files - only ignore the pickle file (120MB), web-Google.txt (20MB) is committed
+web-google.pkl
+web-Google.txt.gz

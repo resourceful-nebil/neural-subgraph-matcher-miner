@@ -24,20 +24,27 @@ jobs:
           mkdir -p ${{ github.workspace }}/results
           chmod -R 777 ${{ github.workspace }}/plots
           chmod -R 777 ${{ github.workspace }}/results
-      - name: Convert web-Google.txt to pickle format
+      - name: Fetch web-google.pkl from GitHub Release
         run: |
-          echo "Converting web-Google.txt to pickle format using Docker container..."
-          docker run --rm \
-            -v ${{ github.workspace }}:/app \
-            -e PYTHONUNBUFFERED=1 \
-            samribahta/decoder-image:latest \
-            bash -c "
-              set -e
-              echo 'Converting dataset to pickle format...'
-              python /app/convert_google_web.py --input /app/web-Google.txt --output /app/web-google.pkl
-              echo 'Dataset conversion completed!'
-              ls -lh /app/web-google.pkl
-            "
+          echo "Downloading web-google.pkl from GitHub Releases..."
+          wget -O ${{ github.workspace }}/web-google.pkl https://github.com/resourceful-nebil/neural-subgraph-matcher-miner/releases/download/dataset-v1/web-google.pkl
+
+          echo "Verifying downloaded file..."
+          file ${{ github.workspace }}/web-google.pkl
+
+          FILE_SIZE=$(stat -c%s ${{ github.workspace }}/web-google.pkl)
+          echo "File size: $FILE_SIZE bytes"
+
+          if [ $FILE_SIZE -lt 100000 ]; then
+            echo "ERROR: web-google.pkl is too small. Likely not downloaded correctly!"
+            exit 1
+          fi
+
+          if file ${{ github.workspace }}/web-google.pkl | grep -Eq "HTML|ASCII|Unicode"; then
+            echo "ERROR: web-google.pkl is not a valid binary file!"
+            exit 1
+          fi
+          echo "web-google.pkl verified as binary."
       - name: Check available processors and usage percentage
         id: cpu-check
         run: |

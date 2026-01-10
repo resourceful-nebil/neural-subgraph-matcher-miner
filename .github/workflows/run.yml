@@ -68,8 +68,8 @@ jobs:
               echo 'Starting decoder run...'
               python -m subgraph_mining.decoder \
                 --dataset=web-google.pkl \
-                --n_neighborhoods=10000 \
-                --n_trials=1000 \
+                --n_neighborhoods=20000 \
+                --n_trials=5000 \
                 --min_pattern_size=3 \
                 --max_pattern_size=8 \
                 --min_neighborhood_size=20 \
